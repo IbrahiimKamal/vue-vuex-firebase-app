@@ -1,39 +1,6 @@
-const exchangesData = [
-  {
-    id: 'ad7a1231238dasd',
-    type: 'product',
-    title: 'New Tesla Car',
-    description: 'I will exchange this nice Tesla car',
-    price: 200,
-    user: '2398173193',
-    image:
-      'https://images.unsplash.com/photo-1554744512-d6c603f27c54?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=50',
-    country: 'Germany',
-    city: 'Berlin',
-    tags: ['cars', 'electric'],
-  },
-  {
-    id: 'ad7asdzxasa68dasd',
-    type: 'service',
-    title: 'Programming Lessons',
-    description: 'I will make you a super programmer',
-    price: 45,
-    user: 'asd7as9d7',
-    image:
-      'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80',
-    country: 'Spain',
-    city: 'Barcelona',
-    tags: ['programming', 'code'],
-  },
-];
+import { getDocs, query, collectionGroup } from 'firebase/firestore';
 
-const _fetchExchanges = () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(exchangesData);
-    }, 1000);
-  });
-};
+import { db } from '@/db';
 
 export default {
   namespaced: true,
@@ -52,8 +19,14 @@ export default {
 
   actions: {
     async getExchanges({ commit }) {
-      const exchangesData = await _fetchExchanges();
-      commit('setExchanges', exchangesData);
+      const exchangeQuery = query(collectionGroup(db, 'exchanges'));
+      const snapshot = await getDocs(exchangeQuery);
+      const exchanges = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      commit('setExchanges', exchanges);
     },
   },
 };
