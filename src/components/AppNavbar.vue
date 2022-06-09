@@ -1,12 +1,20 @@
 <template>
   <header class="header">
-    <nav class="navbar">
+    <nav :class="isHome" class="navbar">
       <div class="container">
         <div class="navbar-brand">
-          <a class="navbar-item has-text-white is-size-2 has-text-weight-bold" href="#">
+          <a
+            class="navbar-item has-text-white is-size-2 has-text-weight-bold"
+            href="#"
+          >
             {{ title }}
           </a>
-          <span role="button" tabindex="0" class="navbar-burger burger has-text-white" data-target="navbar-menu">
+          <span
+            role="button"
+            tabindex="0"
+            class="navbar-burger burger has-text-white"
+            data-target="navbar-menu"
+          >
             <span></span>
             <span></span>
             <span></span>
@@ -14,14 +22,14 @@
         </div>
         <div id="navbar-menu" class="navbar-menu">
           <div class="navbar-end">
-            <a
+            <router-link
               v-for="item in menuItems"
               :key="item"
+              :to="item.link"
               class="navbar-item nav-web"
-              :href="item.link"
             >
               {{ item.text }}
-            </a>
+            </router-link>
           </div>
         </div>
       </div>
@@ -38,8 +46,14 @@ export default {
     },
     menuItems: {
       type: Array,
-      required: true
-    }
-  }
-}
+      required: true,
+    },
+  },
+
+  computed: {
+    isHome() {
+      return this.$route.path === '/' ? '' : 'with-background';
+    },
+  },
+};
 </script>
