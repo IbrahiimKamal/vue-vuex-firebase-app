@@ -35,6 +35,9 @@
             </router-link>
 
             <template v-if="isAuthenticated">
+              <router-link to="/profile" class="navbar-item"
+                >Profile</router-link
+              >
               <div
                 @click="$store.dispatch('user/logout')"
                 class="navbar-item clickable"

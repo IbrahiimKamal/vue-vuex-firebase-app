@@ -5,7 +5,7 @@ import {
   onAuthStateChanged,
   signOut,
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 
 import { db } from '@/db';
 
@@ -35,11 +35,9 @@ export default {
       state.data = user;
       console.log(user);
     },
-  },
 
-  getters: {
-    isAuthenticated(state) {
-      return !!state.data;
+    updateProfile(state, profile) {
+      state.data = { ...state.data, ...profile };
     },
   },
 
@@ -57,6 +55,15 @@ export default {
           callback(null);
         }
       });
+    },
+
+    async updateProfile({ commit, dispatch }, { data, onSuccess, isLoading }) {
+      const userRef = doc(db, 'users', data.id);
+      await updateDoc(userRef, data);
+      commit('updateProfile', data);
+      dispatch('toast/success', 'Profile updated', { root: true });
+      onSuccess();
+      isLoading();
     },
 
     async getUserProfile({ commit }, user) {
@@ -123,6 +130,12 @@ export default {
 
     async createUserProfile(_, { id, ...profile }) {
       await setDoc(doc(db, 'users', id), profile);
+    },
+  },
+
+  getters: {
+    isAuthenticated(state) {
+      return !!state.data;
     },
   },
 };
