@@ -12,6 +12,7 @@ import store from './store';
 library.add(faStar);
 
 const app = createApp(App);
+store.dispatch('user/onAuthChange');
 
 app.use(store).use(router).use(Toast);
 

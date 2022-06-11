@@ -22,6 +22,9 @@
         </div>
         <div id="navbar-menu" class="navbar-menu">
           <div class="navbar-end">
+            <div v-if="isAuthenticated" class="navbar-item">
+              {{ user.email }}
+            </div>
             <router-link
               v-for="item in menuItems"
               :key="item"
@@ -38,6 +41,8 @@
 </template>
 
 <script>
+import useAuth from '@/compositions/useAuth';
+
 export default {
   props: {
     title: {
@@ -48,6 +53,15 @@ export default {
       type: Array,
       required: true,
     },
+  },
+
+  setup() {
+    const { user, isAuthenticated } = useAuth();
+
+    return {
+      user,
+      isAuthenticated,
+    };
   },
 
   computed: {
