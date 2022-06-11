@@ -33,6 +33,7 @@
               @click="login"
               type="button"
               class="button is-block is-info is-large is-fullwidth"
+              :class="{ 'is-loading': isProcessing }"
             >
               Sign In
             </button>
@@ -49,6 +50,8 @@
 </template>
 
 <script>
+import useAuth from '@/compositions/useAuth';
+
 export default {
   data() {
     return {
@@ -59,9 +62,26 @@ export default {
     };
   },
 
+  setup() {
+    const { isProcessing, isAuthenticated } = useAuth();
+
+    return {
+      isProcessing,
+      isAuthenticated,
+    };
+  },
+
+  watch: {
+    isAuthenticated(isAuth) {
+      if (isAuth) {
+        this.$router.push('/');
+      }
+    },
+  },
+
   methods: {
     login() {
-      console.log(this.form);
+      this.$store.dispatch('user/login', this.form);
     },
   },
 };

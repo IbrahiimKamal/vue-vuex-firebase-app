@@ -17,8 +17,6 @@ export default {
         { text: 'Home', link: '/' },
         { text: 'About', link: '/about' },
         { text: 'FAQ', link: '/faq' },
-        { text: 'Login', link: '/login' },
-        { text: 'Register', link: '/register' },
       ],
     };
   },

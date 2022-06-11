@@ -85,19 +85,18 @@ export default {
   },
 
   setup() {
-    const { error, isProcessing } = useAuth();
+    const { isProcessing, isAuthenticated } = useAuth();
 
     return {
-      error,
       isProcessing,
+      isAuthenticated,
     };
   },
 
   watch: {
-    isProcessing(processin, prevProcessing) {
-      if (!processin && prevProcessing && !this.error) {
+    isAuthenticated(isAuth) {
+      if (isAuth) {
         this.$router.push('/');
-        this.$store.dispatch('toast/success', 'Successfully registered');
       }
     },
   },

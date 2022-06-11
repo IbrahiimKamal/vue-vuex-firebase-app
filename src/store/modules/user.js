@@ -1,7 +1,9 @@
 import {
   getAuth,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   onAuthStateChanged,
+  signOut,
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
@@ -42,12 +44,17 @@ export default {
   },
 
   actions: {
-    onAuthChange({ dispatch }) {
+    onAuthChange({ dispatch, commit }, callback) {
+      commit('setAuthIsProcessing', true);
       onAuthStateChanged(getAuth(), async (user) => {
         if (user) {
-          dispatch('getUserProfile', user);
+          await dispatch('getUserProfile', user);
+          commit('setAuthIsProcessing', false);
+          callback(user);
         } else {
           console.log('User is signed out');
+          commit('setAuthIsProcessing', false);
+          callback(null);
         }
       });
     },
@@ -88,6 +95,29 @@ export default {
         dispatch('toast/error', e.message, { root: true });
       } finally {
         commit('setAuthIsProcessing', false);
+      }
+    },
+
+    async login({ commit, dispatch }, { email, password }) {
+      commit('setAuthIsProcessing', true);
+      commit('setAuthError', '');
+
+      try {
+        await signInWithEmailAndPassword(getAuth(), email, password);
+      } catch (e) {
+        commit('setAuthError', e.message);
+        dispatch('toast/error', e.message, { root: true });
+      } finally {
+        commit('setAuthIsProcessing', false);
+      }
+    },
+
+    async logout({ commit }) {
+      try {
+        await signOut(getAuth());
+        commit('setUser', null);
+      } catch (error) {
+        console.log('Can not logout', error);
       }
     },
 
